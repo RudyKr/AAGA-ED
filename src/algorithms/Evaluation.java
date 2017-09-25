@@ -13,6 +13,26 @@ private static boolean isMember (ArrayList<Point> points, Point p)
 	return false;
 }
 
+public static boolean isValid (ArrayList<Point> graphe, ArrayList<Point> dominantSet, int edgeThreshold)
+{
+	boolean valid = true;
+	for (Point p : graphe)
+	{
+		boolean exists = false;
+		for (Point q : dominantSet)
+		{
+			if (p.distance(q) < edgeThreshold)
+			{
+				exists = true;
+				break;
+			}
+		}
+		if (!exists)
+			return false;
+	}
+	return true;
+}
+
 public static boolean isValid (ArrayList<Point> origPoints,
                                ArrayList<Point> edominant,
                                ArrayList<Point> edomines,
