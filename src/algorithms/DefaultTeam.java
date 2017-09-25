@@ -8,13 +8,13 @@ public class DefaultTeam
 {
 public ArrayList<Point> calculDominatingSet (ArrayList<Point> points, int edgeThreshold)
 {
-	//REMOVE >>>>>
 	ArrayList<Point> result = (ArrayList<Point>) points.clone();
-	for (int i = 0; i < points.size() / 3; i++)
-		result.remove(0);
-	// if (false) result = readFromFile("output0.points");
-	// else saveToFile("output",result);
-	//<<<<< REMOVE
+	return glouton(result, points, edgeThreshold);
+}
+
+private ArrayList<Point> glouton (ArrayList<Point> result, ArrayList<Point> points, int edgeThreshold)
+{
+	ArrayList<Point> ed = new ArrayList<Point>();
 
 	return result;
 }
