@@ -13,42 +13,45 @@ private static boolean isMember (ArrayList<Point> points, Point p)
 	return false;
 }
 
-public static boolean isValid (ArrayList<Point> graphe, ArrayList<Point> dominantSet, int edgeThreshold)
-{
-	boolean valid = true;
-	for (Point p : graphe)
-	{
-		boolean exists = false;
-		for (Point q : dominantSet)
-		{
-			if (p.distance(q) < edgeThreshold)
-			{
-				exists = true;
-				break;
-			}
-		}
-		if (!exists)
-			return false;
-	}
-	return true;
-}
+//public static boolean isValid (ArrayList<Point> graphe, ArrayList<Point> dominantSet, int edgeThreshold)
+//{
+//	for (Point p : graphe)
+//	{
+//		if(dominantSet.contains(p))
+//		{
+//			continue;
+//		}
+//		boolean exists = false;
+//		for (Point q : dominantSet)
+//		{
+//			if (p.distance(q) < edgeThreshold)
+//			{
+//				exists = true;
+//				break;
+//			}
+//		}
+//		if (!exists)
+//			return false;
+//	}
+//	return true;
+//}
 
-public static boolean isValid (ArrayList<Point> origPoints,
-                               ArrayList<Point> edominant,
-                               ArrayList<Point> edomines,
-                               int edgeThreshold)
-{
-	boolean valid = true;
-	for (Point p : origPoints)
-	{
-		if (edominant.contains(p))
-			continue;
-		if (edomines.contains(p))
-			continue;
-		valid = false;
-	}
-	return valid;
-}
+//public static boolean isValid (ArrayList<Point> origPoints,
+//                               ArrayList<Point> edominant,
+//                               ArrayList<Point> edomines,
+//                               int edgeThreshold)
+//{
+//	boolean valid = true;
+//	for (Point p : origPoints)
+//	{
+//		if (edominant.contains(p))
+//			continue;
+//		if (edomines.contains(p))
+//			continue;
+//		valid = false;
+//	}
+//	return valid;
+//}
 
 protected static ArrayList<Point> neighbor (Point p, ArrayList<Point> vertices, int edgeThreshold)
 {
