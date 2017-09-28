@@ -3,15 +3,11 @@ package algorithms;
 import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Collections;
 
 public class DefaultTeam
 {
 
-public ArrayList<Point> calculDominatingSet (ArrayList<Point> points, int edgeThreshold)
-{
-	return localSearch(points, edgeThreshold);
-}
+private int cpt = 0;
 
 public static boolean isValid (ArrayList<Point> graphe, ArrayList<Point> dominantSet, int edgeThreshold)
 {
@@ -36,20 +32,60 @@ public static boolean isValid (ArrayList<Point> graphe, ArrayList<Point> dominan
 	return true;
 }
 
+protected static ArrayList<Point> neighbor (Point p, ArrayList<Point> vertices, int edgeThreshold)
+{
+	ArrayList<Point> result = new ArrayList<Point>();
+
+	for (Point point : vertices)
+		if (point.distance(p) < edgeThreshold && !point.equals(p))
+			result.add((Point) point.clone());
+
+	return result;
+}
+
+public ArrayList<Point> calculDominatingSet (ArrayList<Point> points, int edgeThreshold)
+{
+//	return localSearch(points, edgeThreshold);
+	return localSearch10(points, edgeThreshold);
+//	return gloutonDist(points, edgeThreshold);
+}
+
+private ArrayList<Point> localSearch10 (ArrayList<Point> graphe, int edgeThreshold)
+{
+	long               time   = System.currentTimeMillis();
+	ArrayList<Integer> scores = new ArrayList<>();
+	ArrayList<Point>   bestDS = localSearch(graphe, edgeThreshold);
+	scores.add(bestDS.size());
+	for (int i = 0; i < 10; i++)
+	{
+		ArrayList<Point> local = localSearch(graphe, edgeThreshold);
+		scores.add(local.size());
+		if (local.size() < bestDS.size())
+			bestDS = local;
+		System.out.print(local.size() + "   ");
+	}
+	System.out.println("\nFinished : high score :" + bestDS.size() + " \t \t \t scores : " + scores);
+	time -= System.currentTimeMillis();
+	System.out.println("Execution time : " + (double) (-time) / 1000 + "sec");
+	return bestDS;
+
+}
+
 private ArrayList<Point> localSearch (ArrayList<Point> graphe, int edgeThreshold)
 {
-	long             time     = System.currentTimeMillis();
-	int              i        = 0;
+//	long             time     = System.currentTimeMillis();
+//	int              i        = 0;
 	ArrayList<Point> ds       = (ArrayList<Point>) graphe.clone();
 	ArrayList<Point> dsreturn = new ArrayList<Point>();
 	while (isValid(graphe, ds, edgeThreshold))
 	{
-		int  sizebefore = ds.size();
-		long timeloop   = System.currentTimeMillis();
+		int sizebefore = ds.size();
+//		long timeloop   = System.currentTimeMillis();
 		dsreturn = (ArrayList<Point>) ds.clone();
 		ds = localsearch2_1(ds, graphe, edgeThreshold);
-		long timeendloop = System.currentTimeMillis();
-		long loop        = timeendloop - timeloop;
+//		ds = localsearch3_2(ds, graphe, edgeThreshold);
+//		long timeendloop = System.currentTimeMillis();
+//		long loop        = timeendloop - timeloop;
 //		graphe.add(graphe.remove(0));
 //		if (i * 0.0012 > 1)
 //		{
@@ -67,15 +103,14 @@ private ArrayList<Point> localSearch (ArrayList<Point> graphe, int edgeThreshold
 //			graphe.add(graphe.remove(0));
 //			System.out.println("DOUBLE SHIFT !");
 //		}
-		Collections.shuffle(graphe);
 
-		System.out.println(
-				  "localsearch n°" + i++ + "   taille de dominantSet : " + ds.size() + "   temps d'execution : " + "" +
-				  (double) (timeendloop - time) / 1000 + "s" + "   temps de loop :" + (double) (loop) / 1000 + "s");
+//		System.out.println(
+//				  "localsearch n°" + i++ + "   taille de dominantSet : " + ds.size() + "   temps d'execution : " + "" +
+//				  (double) (timeendloop - time) / 1000 + "s" + "   temps de loop :" + (double) (loop) / 1000 + "s");
 		int sizeafter = ds.size();
 		if (sizeafter - sizebefore == 0)
 		{
-			System.out.println("Terminé !");
+			System.out.println("Terminé ! Score : " + sizeafter);
 			break;
 		}
 	}
@@ -92,11 +127,11 @@ private ArrayList<Point> localsearch2_1 (ArrayList<Point> dominantSet, ArrayList
 //		i++;
 //		j = 0;
 		Point ii = dominantSet.get(i);
-		for (int j = i; j < dominantSet.size(); j++)
+		for (int j = i + 1; j < dominantSet.size(); j++)
 		{
 //			j++;
 			Point jj = dominantSet.get(j);
-			if (ii.distance(jj) > tooFar || ii.equals(jj))
+			if (ii.distance(jj) > tooFar)
 				continue;
 //			k = 0;
 			for (int k = 0; k < rest.size(); k++)
@@ -123,40 +158,40 @@ private ArrayList<Point> localsearch2_1 (ArrayList<Point> dominantSet, ArrayList
 
 private ArrayList<Point> localsearch3_2 (ArrayList<Point> dominantSet, ArrayList<Point> graphe, int edgeThreshold)
 {
-//	int              i      = 0, j, k;
-	ArrayList<Point> rest   = (ArrayList<Point>) graphe.clone();
-	double           tooFar = Math.sqrt(2) * 3 * edgeThreshold;
+	ArrayList<Point> rest = (ArrayList<Point>) graphe.clone();
+	System.out.println("start");
+	System.out.println(rest.size());
+	rest.removeAll(dominantSet);
+	System.out.println(rest.size());
+	double tooFar = Math.sqrt(2) * 3 * edgeThreshold;
 	for (int i = 0; i < dominantSet.size(); i++)
 	{
 		Point ii = dominantSet.get(i);
 		for (int j = i; j < dominantSet.size(); j++)
 		{
+			System.out.println(i + " / " + j);
 			Point jj = dominantSet.get(j);
-			if (ii.distance(jj) > tooFar)
+			if (ii.distance(jj) > tooFar || ii.equals(jj))
 				continue;
-			if (ii.equals(jj))
-				continue;
-			for (int k = 0; k < dominantSet.size(); k++)
+			for (int k = i + j; k < dominantSet.size(); k++)
 			{
-				Point kk = dominantSet.get(k);
-				if (kk.distance(ii) > tooFar || kk.distance(jj) > tooFar)
+				if (k < i || k < j)
 					continue;
-				if (kk.equals(ii) || kk.equals(jj))
+				Point kk = dominantSet.get(k);
+				if (kk.distance(ii) > tooFar || kk.distance(jj) > tooFar || kk.equals(ii) || kk.equals(jj))
 					continue;
 				for (int x = 0; x < rest.size(); x++)
 				{
 					Point xx = rest.get(x);
-					if (xx.distance(ii) > tooFar || xx.distance(jj) > tooFar || xx.distance(kk) > tooFar)
-						continue;
-					if (xx.equals(ii) || xx.equals(ii) || xx.equals(jj) || xx.equals(kk))
+					if (xx.distance(ii) > tooFar || xx.distance(jj) > tooFar || xx.distance(kk) > tooFar || xx.equals(ii) ||
+					    xx.equals(ii) || xx.equals(jj) || xx.equals(kk))
 						continue;
 					for (int y = 0; y < rest.size(); y++)
 					{
 						Point yy = rest.get(y);
 						if (yy.distance(ii) > tooFar || yy.distance(jj) > tooFar || yy.distance(kk) > tooFar ||
-						    yy.distance(xx) > tooFar)
-							continue;
-						if (yy.equals(ii) || yy.equals(ii) || yy.equals(jj) || yy.equals(kk) || yy.equals(xx))
+						    yy.distance(xx) > tooFar || yy.equals(ii) || yy.equals(ii) || yy.equals(jj) || yy.equals(kk) ||
+						    yy.equals(xx))
 							continue;
 						ArrayList<Point> dsClone = (ArrayList<Point>) dominantSet.clone();
 						dsClone.remove(ii);
@@ -166,6 +201,9 @@ private ArrayList<Point> localsearch3_2 (ArrayList<Point> dominantSet, ArrayList
 						dsClone.add(yy);
 						if (isValid(graphe, dsClone, edgeThreshold))
 						{
+							System.out.println(
+									  "Score :" + dsClone.size() + "\nValid trouvé après " + i + 1 + " x " + j + 1 + " x " + k +
+									  1 + " x " + x + 1 + " x " + y + 1 + "" + " itérations");
 							return dsClone;
 						}
 					}
@@ -174,19 +212,6 @@ private ArrayList<Point> localsearch3_2 (ArrayList<Point> dominantSet, ArrayList
 		}
 	}
 	return dominantSet;
-}
-
-private ArrayList<Point> glouton (ArrayList<Point> points, int edgeThreshold)
-{
-	ArrayList<Point> reste     = (ArrayList<Point>) points.clone();
-	ArrayList<Point> dominants = new ArrayList<Point>();
-	while (!isValid(points, dominants, edgeThreshold))
-	{
-
-		dominants.add(reste.remove(0));
-		System.out.println(dominants.size());
-	}
-	return dominants;
 }
 
 private ArrayList<Point> gloutonbis (ArrayList<Point> points, int edgeThreshold)
@@ -275,5 +300,57 @@ private void saveToFile (String filename, ArrayList<Point> result)
 	{
 		printToFile(filename + Integer.toString(index) + ".points", result);
 	}
+}
+
+private ArrayList<Point> gloutonDist (ArrayList<Point> graphe, int edgeThreshold)
+{
+	ArrayList<Point> ds           = (ArrayList<Point>) graphe.clone();
+	ArrayList<Point> pointsGrades = new ArrayList<>();
+	ArrayList<Point> artirer      = new ArrayList<>();
+	Point            a            = new Point();
+	Point            b            = new Point();
+	double           distMin      = 1000.0;
+	int              gradeMax     = 0;
+	while (true)
+	{
+		ds.removeAll(artirer);
+		ArrayList<Point> dsreturn = (ArrayList<Point>) ds.clone();
+		for (Point i : ds)
+		{
+			int s = neighbor(i, ds, edgeThreshold).size();
+			if (s > gradeMax)
+			{
+				pointsGrades.clear();
+				gradeMax = s;
+				pointsGrades.add(i);
+			}
+		}
+		for (Point i : pointsGrades)
+		{
+			for (Point p : ds)
+			{
+				if (i.distance(p) < distMin)
+				{
+					a = i;
+					b = p;
+				}
+			}
+		}
+		if (neighbor(a, ds, edgeThreshold).size() > neighbor(b, ds, edgeThreshold).size())
+		{
+			ds.remove(a);
+			artirer.add(a);
+		}
+		else
+		{
+			ds.remove(b);
+			artirer.add(b);
+		}
+		System.out.println(dsreturn.size());
+		if (!isValid(graphe, ds, edgeThreshold))
+			return dsreturn;
+
+	}
+//		Collections.shuffle(graphe);
 }
 }
