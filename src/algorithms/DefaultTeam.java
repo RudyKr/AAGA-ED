@@ -32,24 +32,6 @@ private static boolean isValid (ArrayList<Point> graphe, ArrayList<Point> domina
 	return true;
 }
 
-private static double distancecarree (Point p1, Point p2)
-{
-	double var1 = p1.getX() - p2.getX();
-	double var2 = p1.getY() - p2.getY();
-	return var1 * var1 + var2 * var2;
-}
-
-public ArrayList<Point> calculDominatingSet (ArrayList<Point> points, int edgeThreshold)
-{
-//	return localSearch(points, edgeThreshold);
-//	return testValid(points, edgeThreshold);
-	cpt++;
-	if (cpt % 100 == -1)
-		save();
-	return bestLS(points, edgeThreshold);
-//	return result();
-}
-
 private void save ()
 {
 	for (int i = 0; i < 100; i++)
@@ -63,36 +45,11 @@ private ArrayList<Point> result ()
 	return readFromFile("records/res" + cpt % 100 + ".points");
 }
 
-private ArrayList<Point> bestLS (ArrayList<Point> graphe, int edgeThreshold)
+private static double distancecarree (Point p1, Point p2)
 {
-//	long               time   = System.currentTimeMillis();
-	ArrayList<Integer> scores = new ArrayList<>();
-	ArrayList<Point>   bestDS = readFromFile("records/res" + cpt % 100 + ".points");
-	//	if (temp.size() < bestDS.size())
-//	{
-//	}
-	scores.add(bestDS.size());
-	for (int i = 0; i < 5; i++)
-	{
-		ArrayList<Point> local = localSearch(graphe, edgeThreshold);
-		scores.add(local.size());
-		if (local.size() < bestDS.size())
-			bestDS = local;
-	}
-//	Double avg = scores.stream().mapToInt(val -> val).average());
-	if (scores.get(1) < scores.get(0))
-	{
-		System.out.println(
-				  "New high score on instance n°" + cpt % 100 + " ! " + scores.get(1) + " !!    (Previous one was " +
-				  scores.get(0) + ")        Average : " + avg());
-	}
-//	System.out.println(
-//			  "\nFinished : high score :" + bestDS.size() + " \t \t \t scores : " + scores + "      avg : " + avg);
-//	time -= System.currentTimeMillis();
-//	System.out.println("Execution time : " + (double) (-time) / 1000 + "sec");
-	printToFile("records/res" + Integer.toString(cpt % 100) + ".points", bestDS);
-	return bestDS;
-
+	double var1 = p1.getX() - p2.getX();
+	double var2 = p1.getY() - p2.getY();
+	return var1 * var1 + var2 * var2;
 }
 
 private ArrayList<Point> localsearch3_2 (ArrayList<Point> dominantSet, ArrayList<Point> graphe, int edgeThreshold)
@@ -185,39 +142,15 @@ private ArrayList<Point> localSearch (ArrayList<Point> graphe, int edgeThreshold
 	return dsreturn;
 }
 
-private ArrayList<Point> readFromFile (String filename)
+public ArrayList<Point> calculDominatingSet (ArrayList<Point> points, int edgeThreshold)
 {
-	String           line;
-	String[]         coordinates;
-	ArrayList<Point> points = new ArrayList<Point>();
-	try
-	{
-		BufferedReader input = new BufferedReader(new InputStreamReader(new FileInputStream(filename)));
-		try
-		{
-			while ((line = input.readLine()) != null)
-			{
-				coordinates = line.split("\\s+");
-				points.add(new Point(Integer.parseInt(coordinates[0]), Integer.parseInt(coordinates[1])));
-			}
-		} catch (IOException e)
-		{
-			System.err.println("Exception: interrupted I/O.");
-		} finally
-		{
-			try
-			{
-				input.close();
-			} catch (IOException e)
-			{
-				System.err.println("I/O exception: unable to close " + filename);
-			}
-		}
-	} catch (FileNotFoundException e)
-	{
-		System.err.println("Input file not found.");
-	}
-	return points;
+	cpt++;
+	if (cpt % 100 == -1)
+		save();
+//	return localSearch(points, edgeThreshold);
+//	return testValid(points, edgeThreshold);
+	return bestLS(points, edgeThreshold);
+//	return result();
 }
 
 private ArrayList<Point> localsearch2_1 (ArrayList<Point> dominantSet, ArrayList<Point> graphe, int edgeThreshold)
@@ -326,5 +259,74 @@ private ArrayList<Point> testValid (ArrayList<Point> graphe, int edgeThreshold)
 //	System.out.println("Temps des isValid :");//72296 avec distance et 171611 avec distancecarree
 //	System.out.println(timeafter - time);
 	return ds;
+}
+
+private ArrayList<Point> bestLS (ArrayList<Point> graphe, int edgeThreshold)
+{
+//	long               time   = System.currentTimeMillis();
+	ArrayList<Integer> scores = new ArrayList<>();
+	ArrayList<Point>   bestDS = readFromFile("records/res" + cpt % 100 + ".points");
+	//	if (temp.size() < bestDS.size())
+//	{
+//	}
+	scores.add(bestDS.size());
+	System.out.println("records/res" + cpt % 100 + ".points   Score :" + bestDS.size());
+	for (int i = 0; i < 1; i++)
+	{
+		ArrayList<Point> local = localSearch(graphe, edgeThreshold);
+		scores.add(local.size());
+		if (local.size() < bestDS.size())
+			bestDS = local;
+	}
+//	Double avg = scores.stream().mapToInt(val -> val).average());
+	System.out.println(scores);
+	if (scores.get(1) < scores.get(0))
+	{
+		System.out.println(
+				  "New high score on instance n°" + cpt % 100 + " ! " + scores.get(1) + " !!    (Previous one was " +
+				  scores.get(0) + ")        Average : " + avg());
+	}
+//	System.out.println(
+//			  "\nFinished : high score :" + bestDS.size() + " \t \t \t scores : " + scores + "      avg : " + avg);
+//	time -= System.currentTimeMillis();
+//	System.out.println("Execution time : " + (double) (-time) / 1000 + "sec");
+	printToFile("records/res" + Integer.toString(cpt % 100) + ".points", bestDS);
+	return bestDS;
+
+}
+
+private ArrayList<Point> readFromFile (String filename)
+{
+	String           line;
+	String[]         coordinates;
+	ArrayList<Point> points = new ArrayList<Point>();
+	try
+	{
+		BufferedReader input = new BufferedReader(new InputStreamReader(new FileInputStream(filename)));
+		try
+		{
+			while ((line = input.readLine()) != null)
+			{
+				coordinates = line.split("\\s+");
+				points.add(new Point(Integer.parseInt(coordinates[0]), Integer.parseInt(coordinates[1])));
+			}
+		} catch (IOException e)
+		{
+			System.err.println("Exception: interrupted I/O.");
+		} finally
+		{
+			try
+			{
+				input.close();
+			} catch (IOException e)
+			{
+				System.err.println("I/O exception: unable to close " + filename);
+			}
+		}
+	} catch (FileNotFoundException e)
+	{
+		System.err.println(filename + "Input file not found.");
+	}
+	return points;
 }
 }
