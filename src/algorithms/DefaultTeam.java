@@ -163,6 +163,7 @@ private ArrayList<Point> localSearch (ArrayList<Point> graphe, int edgeThreshold
 		int sizebefore = ds.size();
 //		long timeloop   = System.currentTimeMillis();
 		dsreturn = (ArrayList<Point>) ds.clone();
+		Collections.shuffle(graphe);
 		ds = localsearch2_1(ds, graphe, edgeThreshold);
 //		ds = localsearch3_2(ds, graphe, edgeThreshold);
 //		long timeendloop = System.currentTimeMillis();
@@ -172,7 +173,6 @@ private ArrayList<Point> localSearch (ArrayList<Point> graphe, int edgeThreshold
 //		System.out.println(
 //				  "localsearch n°" + i++ + "   taille de dominantSet : " + ds.size() + "   temps d'execution : " + "" +
 //				  (double) (timeendloop - time) / 1000 + "s" + "   temps de loop :" + (double) (loop) / 1000 + "s");
-		Collections.shuffle(graphe);
 		int sizeafter = ds.size();
 		if (sizeafter - sizebefore == 0)
 		{
